@@ -1,0 +1,437 @@
+{
+ "slug": "striver-sde",
+ "name": "Striver SDE (starter)",
+ "description": "Curated starter subset of takeuforward's SDE Sheet \u2014 arrays, strings, linked lists, trees.",
+ "source_url": "https://takeuforward.org/interviews/strivers-sde-sheet-top-coding-interview-problems/",
+ "questions": [
+  {
+   "slug": "sort-colors",
+   "title": "Sort 0s, 1s and 2s",
+   "url": "https://leetcode.com/problems/sort-colors/",
+   "difficulty": "medium",
+   "topics": [
+    "Arrays",
+    "Sorting"
+   ]
+  },
+  {
+   "slug": "majority-element",
+   "title": "Majority Element (>N/2)",
+   "url": "https://leetcode.com/problems/majority-element/",
+   "difficulty": "easy",
+   "topics": [
+    "Arrays",
+    "Hash Table"
+   ]
+  },
+  {
+   "slug": "maximum-subarray",
+   "title": "Maximum Subarray (Kadane's)",
+   "url": "https://leetcode.com/problems/maximum-subarray/",
+   "difficulty": "medium",
+   "topics": [
+    "Arrays",
+    "DP"
+   ]
+  },
+  {
+   "slug": "best-time-to-buy-and-sell-stock",
+   "title": "Stock Buy and Sell",
+   "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+   "difficulty": "easy",
+   "topics": [
+    "Arrays",
+    "Greedy"
+   ]
+  },
+  {
+   "slug": "next-permutation",
+   "title": "Next Permutation",
+   "url": "https://leetcode.com/problems/next-permutation/",
+   "difficulty": "medium",
+   "topics": [
+    "Arrays"
+   ]
+  },
+  {
+   "slug": "pascals-triangle",
+   "title": "Pascal's Triangle",
+   "url": "https://leetcode.com/problems/pascals-triangle/",
+   "difficulty": "easy",
+   "topics": [
+    "Arrays"
+   ]
+  },
+  {
+   "slug": "merge-intervals",
+   "title": "Merge Overlapping Subintervals",
+   "url": "https://leetcode.com/problems/merge-intervals/",
+   "difficulty": "medium",
+   "topics": [
+    "Intervals"
+   ]
+  },
+  {
+   "slug": "merge-sorted-array",
+   "title": "Merge Sorted Arrays In-Place",
+   "url": "https://leetcode.com/problems/merge-sorted-array/",
+   "difficulty": "medium",
+   "topics": [
+    "Arrays",
+    "Two Pointers"
+   ]
+  },
+  {
+   "slug": "find-the-duplicate-number",
+   "title": "Repeating and Missing Number",
+   "url": "https://leetcode.com/problems/find-the-duplicate-number/",
+   "difficulty": "medium",
+   "topics": [
+    "Arrays",
+    "Math"
+   ]
+  },
+  {
+   "slug": "count-inversions",
+   "title": "Count Inversions",
+   "url": "https://leetcode.com/problems/count-inversions/",
+   "difficulty": "medium",
+   "topics": [
+    "Arrays",
+    "Divide & Conquer"
+   ]
+  },
+  {
+   "slug": "rotate-image",
+   "title": "Rotate Matrix 90\u00b0",
+   "url": "https://leetcode.com/problems/rotate-image/",
+   "difficulty": "medium",
+   "topics": [
+    "Matrix"
+   ]
+  },
+  {
+   "slug": "search-a-2d-matrix",
+   "title": "Search in 2D Matrix",
+   "url": "https://leetcode.com/problems/search-a-2d-matrix/",
+   "difficulty": "medium",
+   "topics": [
+    "Matrix",
+    "Binary Search"
+   ]
+  },
+  {
+   "slug": "majority-element-ii",
+   "title": "Majority Element (>N/3)",
+   "url": "https://leetcode.com/problems/majority-element-ii/",
+   "difficulty": "medium",
+   "topics": [
+    "Arrays"
+   ]
+  },
+  {
+   "slug": "two-sum",
+   "title": "Two Sum (check pair)",
+   "url": "https://leetcode.com/problems/two-sum/",
+   "difficulty": "easy",
+   "topics": [
+    "Arrays",
+    "Hash Table"
+   ]
+  },
+  {
+   "slug": "4sum",
+   "title": "4-Sum",
+   "url": "https://leetcode.com/problems/4sum/",
+   "difficulty": "hard",
+   "topics": [
+    "Arrays",
+    "Two Pointers"
+   ]
+  },
+  {
+   "slug": "longest-consecutive-sequence",
+   "title": "Longest Consecutive Sequence",
+   "url": "https://leetcode.com/problems/longest-consecutive-sequence/",
+   "difficulty": "hard",
+   "topics": [
+    "Arrays",
+    "Hash Table"
+   ]
+  },
+  {
+   "slug": "longest-substring-without-repeating-characters",
+   "title": "Longest Substring Without Repeats",
+   "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+   "difficulty": "medium",
+   "topics": [
+    "Strings",
+    "Sliding Window"
+   ]
+  },
+  {
+   "slug": "longest-palindromic-substring",
+   "title": "Longest Palindromic Substring",
+   "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+   "difficulty": "medium",
+   "topics": [
+    "Strings",
+    "DP"
+   ]
+  },
+  {
+   "slug": "roman-to-integer",
+   "title": "Roman \u2194 Integer",
+   "url": "https://leetcode.com/problems/roman-to-integer/",
+   "difficulty": "easy",
+   "topics": [
+    "Strings",
+    "Math"
+   ]
+  },
+  {
+   "slug": "string-to-integer-atoi",
+   "title": "Implement ATOI",
+   "url": "https://leetcode.com/problems/string-to-integer-atoi/",
+   "difficulty": "medium",
+   "topics": [
+    "Strings"
+   ]
+  },
+  {
+   "slug": "subarrays-with-k-different-integers",
+   "title": "Count Substrings with K Distinct",
+   "url": "https://leetcode.com/problems/subarrays-with-k-different-integers/",
+   "difficulty": "medium",
+   "topics": [
+    "Strings",
+    "Sliding Window"
+   ]
+  },
+  {
+   "slug": "longest-common-prefix-striver",
+   "title": "Longest Common Prefix",
+   "url": "https://leetcode.com/problems/longest-common-prefix-striver/",
+   "difficulty": "easy",
+   "topics": [
+    "Strings"
+   ]
+  },
+  {
+   "slug": "reverse-words-in-a-string",
+   "title": "Reverse Words in a String",
+   "url": "https://leetcode.com/problems/reverse-words-in-a-string/",
+   "difficulty": "medium",
+   "topics": [
+    "Strings"
+   ]
+  },
+  {
+   "slug": "reverse-linked-list",
+   "title": "Reverse a LinkedList",
+   "url": "https://leetcode.com/problems/reverse-linked-list/",
+   "difficulty": "medium",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "middle-of-linked-list",
+   "title": "Middle of LinkedList",
+   "url": "https://leetcode.com/problems/middle-of-linked-list/",
+   "difficulty": "easy",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "merge-two-sorted-lists",
+   "title": "Merge Two Sorted Lists",
+   "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+   "difficulty": "easy",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "remove-nth-node-from-end-of-list",
+   "title": "Remove Nth Node From End",
+   "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+   "difficulty": "medium",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "add-two-numbers",
+   "title": "Add Two Numbers",
+   "url": "https://leetcode.com/problems/add-two-numbers/",
+   "difficulty": "medium",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "delete-node-in-a-linked-list",
+   "title": "Delete Given Node",
+   "url": "https://leetcode.com/problems/delete-node-in-a-linked-list/",
+   "difficulty": "medium",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "intersection-of-two-linked-lists",
+   "title": "Intersection of Two Lists",
+   "url": "https://leetcode.com/problems/intersection-of-two-linked-lists/",
+   "difficulty": "easy",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "detect-a-cycle-in-a-linked-list",
+   "title": "Cycle Detection",
+   "url": "https://leetcode.com/problems/detect-a-cycle-in-a-linked-list/",
+   "difficulty": "easy",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "reverse-nodes-in-k-group",
+   "title": "Reverse in K-Groups",
+   "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+   "difficulty": "hard",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "sort-a-linked-list-of-0s-1s-and-2s",
+   "title": "Sort 0s/1s/2s List",
+   "url": "https://leetcode.com/problems/sort-a-linked-list-of-0s-1s-and-2s/",
+   "difficulty": "medium",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "flatten-a-multilevel-doubly-linked-list",
+   "title": "Flatten a Multilevel List",
+   "url": "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/",
+   "difficulty": "hard",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "copy-list-with-random-pointer",
+   "title": "Clone with Random Pointer",
+   "url": "https://leetcode.com/problems/copy-list-with-random-pointer/",
+   "difficulty": "hard",
+   "topics": [
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "lru-cache",
+   "title": "LRU Cache",
+   "url": "https://leetcode.com/problems/lru-cache/",
+   "difficulty": "medium",
+   "topics": [
+    "Design",
+    "Linked List"
+   ]
+  },
+  {
+   "slug": "lfu-cache",
+   "title": "LFU Cache",
+   "url": "https://leetcode.com/problems/lfu-cache/",
+   "difficulty": "hard",
+   "topics": [
+    "Design"
+   ]
+  },
+  {
+   "slug": "binary-tree-inorder-traversal",
+   "title": "Inorder Traversal",
+   "url": "https://leetcode.com/problems/binary-tree-inorder-traversal/",
+   "difficulty": "easy",
+   "topics": [
+    "Tree",
+    "DFS"
+   ]
+  },
+  {
+   "slug": "binary-tree-level-order-traversal",
+   "title": "Level Order Traversal",
+   "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+   "difficulty": "medium",
+   "topics": [
+    "Tree",
+    "BFS"
+   ]
+  },
+  {
+   "slug": "maximum-depth-of-binary-tree",
+   "title": "Height / Max Depth",
+   "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+   "difficulty": "easy",
+   "topics": [
+    "Tree",
+    "DFS"
+   ]
+  },
+  {
+   "slug": "balanced-binary-tree",
+   "title": "Balanced Binary Tree",
+   "url": "https://leetcode.com/problems/balanced-binary-tree/",
+   "difficulty": "medium",
+   "topics": [
+    "Tree",
+    "DFS"
+   ]
+  },
+  {
+   "slug": "diameter-of-binary-tree",
+   "title": "Diameter of Binary Tree",
+   "url": "https://leetcode.com/problems/diameter-of-binary-tree/",
+   "difficulty": "easy",
+   "topics": [
+    "Tree",
+    "DFS"
+   ]
+  },
+  {
+   "slug": "binary-tree-maximum-path-sum",
+   "title": "Maximum Path Sum",
+   "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+   "difficulty": "hard",
+   "topics": [
+    "Tree",
+    "DFS"
+   ]
+  },
+  {
+   "slug": "same-tree",
+   "title": "Identical Trees",
+   "url": "https://leetcode.com/problems/same-tree/",
+   "difficulty": "easy",
+   "topics": [
+    "Tree",
+    "DFS"
+   ]
+  },
+  {
+   "slug": "binary-tree-zigzag-level-order-traversal",
+   "title": "Zigzag Traversal",
+   "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",
+   "difficulty": "medium",
+   "topics": [
+    "Tree",
+    "BFS"
+   ]
+  }
+ ]
+}

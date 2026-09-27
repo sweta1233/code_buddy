@@ -1,0 +1,18 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+backend/codebuddy.db
+backend/data/
+backend/.env
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Env & OS
+.env
+.env.local
+.DS_Store
+Thumbs.db

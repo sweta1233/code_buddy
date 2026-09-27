@@ -1,0 +1,91 @@
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.api.deps import get_current_user
+from app.db.base import get_db
+from app.models import PlatformAccount, User
+from app.services.platforms import SUPPORTED_PLATFORMS
+from app.services.sync import sync_account, sync_user
+
+router = APIRouter(prefix="/api/platforms", tags=["platforms"])
+
+
+class ConnectIn(BaseModel):
+    platform: str
+    handle: str
+
+
+def _account_out(a: PlatformAccount) -> dict:
+    return {
+        "platform": a.platform, "handle": a.handle, "status": a.last_status,
+        "last_error": a.last_error,
+        "last_synced_at": a.last_synced_at.isoformat() if a.last_synced_at else None,
+    }
+
+
+@router.get("")
+def list_platforms(user: User = Depends(get_current_user)):
+    return {"supported": SUPPORTED_PLATFORMS, "accounts": [_account_out(a) for a in user.accounts]}
+
+
+@router.post("/connect")
+def connect(body: ConnectIn, background: BackgroundTasks, db: Session = Depends(get_db),
+            user: User = Depends(get_current_user)):
+    if body.platform not in SUPPORTED_PLATFORMS:
+        raise HTTPException(400, f"Unsupported platform. Choose from {SUPPORTED_PLATFORMS}")
+    existing = db.execute(
+        select(PlatformAccount).where(
+            PlatformAccount.user_id == user.id, PlatformAccount.platform == body.platform
+        )
+    ).scalars().first()
+    if existing:
+        existing.handle = body.handle.strip()
+        existing.last_status = "pending"
+        existing.last_error = ""
+        account = existing
+    else:
+        account = PlatformAccount(user_id=user.id, platform=body.platform, handle=body.handle.strip())
+        db.add(account)
+    db.commit()
+    db.refresh(account)
+
+    background.add_task(_sync_in_background, user.id, account.id)
+    return _account_out(account)
+
+
+def _sync_in_background(user_id: int, account_id: int) -> None:
+    db = next(get_db())
+    try:
+        account = db.get(PlatformAccount, account_id)
+        if account:
+            sync_account(db, account)
+    finally:
+        db.close()
+
+
+@router.post("/sync")
+def sync_all(background: BackgroundTasks, user: User = Depends(get_current_user)):
+    background.add_task(_sync_all_in_background, user.id)
+    return {"started": True}
+
+
+def _sync_all_in_background(user_id: int) -> None:
+    db = next(get_db())
+    try:
+        sync_user(db, user_id)
+    finally:
+        db.close()
+
+
+@router.delete("/{platform}")
+def disconnect(platform: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    account = db.execute(
+        select(PlatformAccount).where(PlatformAccount.user_id == user.id, PlatformAccount.platform == platform)
+    ).scalars().first()
+    if account is None:
+        raise HTTPException(404, "Platform not connected")
+    db.delete(account)
+    db.commit()
+    return {"deleted": True}
