@@ -1,4 +1,4 @@
-from app.services.platforms import codechef, codeforces, gfg, leetcode
+from app.services.platforms import atcoder, codechef, codeforces, gfg, hackerrank, leetcode
 from app.services.platforms.base import PlatformError
 
 ADAPTERS = {
@@ -6,6 +6,8 @@ ADAPTERS = {
     "codeforces": codeforces,
     "codechef": codechef,
     "gfg": gfg,
+    "hackerrank": hackerrank,
+    "atcoder": atcoder,
 }
 
 SUPPORTED_PLATFORMS = list(ADAPTERS)

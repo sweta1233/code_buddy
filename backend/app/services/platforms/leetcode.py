@@ -114,6 +114,7 @@ def fetch(handle: str) -> dict:
         "easy": counts.get("easy", 0),
         "medium": counts.get("medium", 0),
         "hard": counts.get("hard", 0),
+        "difficulty_breakdown_available": True,
         "ranking": profile["profile"].get("ranking"),
         "rating": contests[-1]["new_rating"] if contests else None,
         "topics": topics,

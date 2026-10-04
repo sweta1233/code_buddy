@@ -1,3 +1,4 @@
+from collections import Counter
 from datetime import datetime, timezone
 
 import httpx
@@ -30,17 +31,31 @@ def fetch(handle: str) -> dict:
 
         rating_changes = []
         rating_resp = client.get(f"{API}/user.rating", params={"handle": handle})
-        if rating_resp.status_code == 200:
-            rating_data = rating_resp.json()
-            if rating_data.get("status") == "OK":
-                rating_changes = rating_data.get("result") or []
+        rating_resp.raise_for_status()
+        rating_data = rating_resp.json()
+        if rating_data.get("status") != "OK":
+            raise platform_error("codeforces", rating_data.get("comment", "contest history request failed"))
+        rating_changes = rating_data.get("result") or []
 
+        # Fetch all history in bounded pages; a single 3000-row request silently
+        # misses older solved problems for active users.
         subs = []
-        status_resp = client.get(f"{API}/user.status", params={"handle": handle, "from": "1", "count": "3000"})
-        if status_resp.status_code == 200:
+        offset = 1
+        page_size = 1000
+        while True:
+            status_resp = client.get(
+                f"{API}/user.status",
+                params={"handle": handle, "from": offset, "count": page_size},
+            )
+            status_resp.raise_for_status()
             status_data = status_resp.json()
-            if status_data.get("status") == "OK":
-                subs = status_data.get("result") or []
+            if status_data.get("status") != "OK":
+                raise platform_error("codeforces", status_data.get("comment", "submission history request failed"))
+            page = status_data.get("result") or []
+            subs.extend(page)
+            if len(page) < page_size:
+                break
+            offset += len(page)
 
     contests = []
     for change in rating_changes:
@@ -54,6 +69,8 @@ def fetch(handle: str) -> dict:
         })
 
     solved: dict[tuple, dict] = {}
+    topic_counter: Counter = Counter()
+
     for sub in subs:
         problem = sub.get("problem", {})
         if sub.get("verdict") != "OK":
@@ -62,16 +79,30 @@ def fetch(handle: str) -> dict:
         if key in solved:
             continue
         ts = sub.get("creationTimeSeconds")
+        tags = problem.get("tags", [])
+        for tag in tags:
+            topic_counter[tag.replace("-", " ").title()] += 1
+
+        diff = _rating_bucket(problem.get("rating"))
         solved[key] = {
             "external_id": f"{problem.get('contestId', 'gym')}{problem.get('index', '')}-{problem.get('name', '')}",
             "title": problem.get("name", "Unknown"),
             "url": f"https://codeforces.com/problemset/problem/{problem.get('contestId')}/{problem.get('index')}"
             if problem.get("contestId")
             else "",
-            "difficulty": _rating_bucket(problem.get("rating")),
-            "topics": problem.get("tags", []),
+            "difficulty": diff,
+            "topics": tags,
             "solved_at": datetime.fromtimestamp(ts, tz=timezone.utc) if ts else None,
         }
+
+    easy_count = sum(1 for s in solved.values() if s["difficulty"] == "easy")
+    medium_count = sum(1 for s in solved.values() if s["difficulty"] == "medium")
+    hard_count = sum(1 for s in solved.values() if s["difficulty"] == "hard")
+
+    topics_list = [
+        {"name": name, "slug": name.lower().replace(" ", "-"), "solved": count}
+        for name, count in topic_counter.most_common(15)
+    ]
 
     stats = {
         "rating": info.get("rating"),
@@ -79,5 +110,11 @@ def fetch(handle: str) -> dict:
         "rank": info.get("rank"),
         "contribution": info.get("contribution"),
         "total_solved": len(solved),
+        "easy": easy_count,
+        "medium": medium_count,
+        "hard": hard_count,
+        "difficulty_method": "problem rating: <1200 easy, 1200-1699 medium, 1700+ hard",
+        "difficulty_breakdown_available": True,
+        "topics": topics_list,
     }
     return {"stats": stats, "submissions": list(solved.values()), "contests": contests}

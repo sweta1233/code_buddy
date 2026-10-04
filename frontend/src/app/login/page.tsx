@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { LogoWordmark } from "@/components/logo";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ import { api, setToken } from "@/lib/api";
 import type { User } from "@/lib/types";
 
 function LoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const [mode, setMode] = useState<"login" | "register">(params.get("mode") === "register" ? "register" : "login");
   const [busy, setBusy] = useState(false);
@@ -43,11 +42,18 @@ function LoginForm() {
         method: "POST",
         body: JSON.stringify(body),
       });
+      if (!res.token || !res.user) {
+        throw new Error("The server did not return a complete sign-in response. Restart the backend and try again.");
+      }
       setToken(res.token);
       localStorage.setItem("codebuddy_user", JSON.stringify(res.user));
-      router.push("/dashboard");
+      window.location.assign("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(
+        err instanceof TypeError
+          ? `Cannot reach the CodeBuddy backend at ${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}. Make sure the backend is running.`
+          : err instanceof Error ? err.message : "Something went wrong"
+      );
     } finally {
       setBusy(false);
     }
@@ -84,8 +90,9 @@ function LoginForm() {
             </>
           )}
           <div className="space-y-1.5">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={form.email} onChange={set("email")} required placeholder="you@college.edu" />
+            <Label htmlFor="email">{mode === "login" ? "Email or username" : "Email"}</Label>
+            <Input id="email" type={mode === "login" ? "text" : "email"} value={form.email} onChange={set("email")} required
+              placeholder={mode === "login" ? "you@college.edu or username" : "you@college.edu"} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="password">Password</Label>

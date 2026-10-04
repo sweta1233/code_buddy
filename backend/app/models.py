@@ -149,6 +149,18 @@ class Sheet(Base):
     questions: Mapped[list["SheetQuestion"]] = relationship(back_populates="sheet", cascade="all, delete-orphan")
 
 
+class SheetOwner(Base):
+    """Links user-imported sheets to the user who added them."""
+
+    __tablename__ = "sheet_owners"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    sheet_id: Mapped[int] = mapped_column(ForeignKey("sheets.id"), index=True)
+
+    __table_args__ = (UniqueConstraint("user_id", "sheet_id"),)
+
+
 class SheetQuestion(Base):
     __tablename__ = "sheet_questions"
 

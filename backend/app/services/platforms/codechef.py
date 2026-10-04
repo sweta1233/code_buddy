@@ -62,6 +62,7 @@ def fetch(handle: str) -> dict:
                 "problems_solved": None,
             })
 
+    total = fully_solved or 0
     stars = stars_el.get_text(strip=True).count("★") if stars_el else None
     stats = {
         "rating": rating,
@@ -69,7 +70,8 @@ def fetch(handle: str) -> dict:
         "highest_rating": int(highest_el.text.strip()) if highest_el and highest_el.text.strip().isdigit() else rating,
         "fully_solved": fully_solved,
         "partially_solved": partially_solved,
-        "total_solved": fully_solved or 0,
+        "total_solved": total,
+        "difficulty_breakdown_available": False,
         "last_activity": datetime.now(tz=timezone.utc).isoformat(),
     }
     return {"stats": stats, "submissions": [], "contests": contests}

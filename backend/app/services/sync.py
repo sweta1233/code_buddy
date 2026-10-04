@@ -6,11 +6,13 @@ from sqlalchemy.orm import Session
 
 from app.models import ContestRecord, PlatformAccount, Snapshot, Submission, utcnow
 from app.services.platforms import PlatformError, get_adapter
+from app.services.platforms.base import normalize_handle
 
 
 def sync_account(db: Session, account: PlatformAccount) -> PlatformAccount:
     adapter = get_adapter(account.platform)
     try:
+        account.handle = normalize_handle(account.platform, account.handle)
         data = adapter.fetch(account.handle)
     except (PlatformError, httpx.HTTPError) as exc:
         account.last_status = "error"

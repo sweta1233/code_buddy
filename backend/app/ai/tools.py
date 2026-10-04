@@ -6,13 +6,16 @@ from langchain_core.tools import tool
 from sqlalchemy import String, cast, select
 from sqlalchemy.orm import Session
 
+from app.ai.planner import build_daily_routine
 from app.ai.rag import search_knowledge, search_my_problems
-from app.models import ContestRecord, Plan, PlanTask, Submission
+from app.models import ContestRecord, Plan, PlanTask, Submission, User
 from app.services.contests import get_upcoming_contests
 from app.services.stats import overview
 
 
 def build_user_tools(db: Session, user_id: int) -> list:
+    user = db.get(User, user_id)
+
     @tool
     def get_my_stats() -> str:
         """Get the student's aggregated coding stats across all connected platforms: totals, difficulty split, per-platform ratings, top topics, streak, and recent submissions. Call this before any question about 'how many/much'."""
@@ -61,7 +64,7 @@ def build_user_tools(db: Session, user_id: int) -> list:
 
     @tool
     def get_upcoming_contests_tool() -> str:
-        """Get upcoming contests from Codeforces and LeetCode."""
+        """Get upcoming contests from Codeforces, LeetCode, CodeChef, and AtCoder with dates, durations, and links."""
         return json.dumps(get_upcoming_contests(db))
 
     @tool
@@ -91,6 +94,23 @@ def build_user_tools(db: Session, user_id: int) -> list:
         })
 
     @tool
+    def plan_today_routine(available_hours: float = 3.0, focus_topic: str = "", wake_time: str = "07:30 AM") -> str:
+        """Generate a time-blocked whole-day study routine for the student tailored to their available hours and topic focus."""
+        if not user:
+            return "User not found."
+        try:
+            routine = build_daily_routine(
+                db,
+                user,
+                available_hours=available_hours,
+                wake_time=wake_time,
+                focus_topic=focus_topic,
+            )
+            return json.dumps(routine)
+        except Exception as e:
+            return f"Could not generate routine: {e}"
+
+    @tool
     def mark_task_done(task_id: int) -> str:
         """Mark a study-plan task as done by its id. Confirm with the student before calling."""
         task = db.get(PlanTask, task_id)
@@ -111,5 +131,6 @@ def build_user_tools(db: Session, user_id: int) -> list:
         get_upcoming_contests_tool,
         explain_topic,
         get_current_plan,
+        plan_today_routine,
         mark_task_done,
     ]

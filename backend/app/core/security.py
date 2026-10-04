@@ -17,7 +17,12 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(password: str, stored: str) -> bool:
-    salt, digest = stored.split("$", 1)
+    try:
+        salt, digest = stored.split("$", 1)
+    except (AttributeError, ValueError):
+        return False
+    if not salt or len(digest) != 64:
+        return False
     candidate = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), _ITERATIONS).hex()
     return hmac.compare_digest(candidate, digest)
 

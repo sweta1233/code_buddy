@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.ai.planner import build_plan, serialize_plan
+from app.ai.planner import build_daily_routine, build_plan, serialize_plan
 from app.api.deps import get_current_user
 from app.db.base import get_db
 from app.models import Plan, PlanTask, User
@@ -17,6 +17,13 @@ class GenerateIn(BaseModel):
     goal: str = Field(min_length=5, max_length=2000)
     target_date: date | None = None
     hours_per_day: float = Field(default=2.0, ge=0.5, le=16)
+
+
+class DailyRoutineIn(BaseModel):
+    available_hours: float = Field(default=3.0, ge=0.5, le=16)
+    wake_time: str = Field(default="07:30 AM")
+    busy_hours_desc: str = Field(default="", max_length=500)
+    focus_topic: str = Field(default="", max_length=200)
 
 
 class TaskPatchIn(BaseModel):
@@ -43,18 +50,33 @@ def current_plan(user: User = Depends(get_current_user), db: Session = Depends(g
 
 @router.post("/generate")
 def generate(body: GenerateIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    # One active plan at a time keeps the mentor's context clean; older ones stay in history.
-    for old in db.execute(
-        select(Plan).where(Plan.user_id == user.id, Plan.status == "active")
-    ).scalars().all():
-        old.status = "archived"
-    db.commit()
-
     try:
         plan = build_plan(db, user, body.goal.strip(), body.target_date, body.hours_per_day)
     except Exception as exc:
         raise HTTPException(502, f"Plan generation failed: {exc}") from exc
+
+    for old in db.execute(
+        select(Plan).where(Plan.user_id == user.id, Plan.status == "active", Plan.id != plan.id)
+    ).scalars().all():
+        old.status = "archived"
+    db.commit()
     return {"plan": serialize_plan(plan)}
+
+
+@router.post("/daily-routine")
+def generate_routine(body: DailyRoutineIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    try:
+        routine = build_daily_routine(
+            db,
+            user,
+            available_hours=body.available_hours,
+            wake_time=body.wake_time,
+            busy_hours_desc=body.busy_hours_desc,
+            focus_topic=body.focus_topic,
+        )
+        return {"routine": routine}
+    except Exception as exc:
+        raise HTTPException(502, f"Daily routine generation failed: {exc}") from exc
 
 
 @router.patch("/tasks/{task_id}")

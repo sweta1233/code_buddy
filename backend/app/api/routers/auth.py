@@ -23,7 +23,7 @@ class RegisterIn(BaseModel):
 
 
 class LoginIn(BaseModel):
-    email: str
+    email: str  # accepts either the account email or username
     password: str
 
 
@@ -62,9 +62,12 @@ def register(body: RegisterIn, db: Session = Depends(get_db)):
 
 @router.post("/login")
 def login(body: LoginIn, db: Session = Depends(get_db)):
+    identity = body.email.strip().lower()
     user = db.execute(
-        select(User).where(User.email == body.email.strip().lower())
+        select(User).where(User.email == identity)
     ).scalars().first()
+    if user is None:
+        user = db.execute(select(User).where(User.username == identity)).scalars().first()
     if user is None or not verify_password(body.password, user.password_hash):
         raise HTTPException(401, "Invalid email or password")
     return {"token": create_access_token(user.id), "user": _user_out(user)}

@@ -3,22 +3,22 @@
 :root {
   --radius: 0.75rem;
   --background: #070b14;
-  --foreground: #e2e8f0;
-  --card: #0d1526;
-  --card-foreground: #e2e8f0;
-  --popover: #0d1526;
-  --popover-foreground: #e2e8f0;
+  --foreground: #f8fafc;
+  --card: rgba(7, 15, 31, 0.62);
+  --card-foreground: #f8fafc;
+  --popover: rgba(7, 15, 31, 0.94);
+  --popover-foreground: #f8fafc;
   --primary: #2dd4bf;
   --primary-foreground: #04211f;
-  --secondary: #131d33;
-  --secondary-foreground: #cbd5e1;
-  --muted: #131d33;
-  --muted-foreground: #7c8aa5;
-  --accent: #132a3f;
+  --secondary: rgba(19, 29, 51, 0.68);
+  --secondary-foreground: #e2e8f0;
+  --muted: rgba(19, 29, 51, 0.62);
+  --muted-foreground: #d5e2f3;
+  --accent: rgba(19, 42, 63, 0.82);
   --accent-foreground: #67e8f9;
   --destructive: #f87171;
-  --border: rgba(148, 163, 184, 0.14);
-  --input: rgba(148, 163, 184, 0.18);
+  --border: rgba(186, 204, 229, 0.24);
+  --input: rgba(148, 163, 184, 0.24);
   --ring: rgba(45, 212, 191, 0.5);
   --chart-1: #2dd4bf;
   --chart-2: #38bdf8;
@@ -61,10 +61,156 @@
 
 body {
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(45, 212, 191, 0.07), transparent),
-    radial-gradient(900px 500px at -10% 30%, rgba(129, 140, 248, 0.06), transparent),
+    radial-gradient(1200px 700px at 85% -10%, rgba(45, 212, 191, 0.12), transparent),
+    radial-gradient(1000px 600px at -10% 25%, rgba(129, 140, 248, 0.10), transparent),
+    radial-gradient(800px 500px at 50% 80%, rgba(244, 114, 182, 0.05), transparent),
     var(--background);
   color: var(--foreground);
+  min-height: 100vh;
+}
+
+.text-muted-foreground {
+  font-weight: 500;
+}
+
+.home-background {
+  position: relative;
+  isolation: isolate;
+}
+
+.home-background-image {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(5, 11, 24, 0.16), rgba(5, 11, 24, 0.3)),
+    url("/images/codebuddy-background.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.route-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(5, 11, 24, 0.18), rgba(5, 11, 24, 0.3)),
+    url("/images/codebuddy-page-backgrounds.png");
+  background-size: cover, 400% 200%;
+  background-position: center, 0% 0%;
+  background-repeat: no-repeat;
+}
+
+.route-backdrop[data-page="platforms"] { background-position: center, 33.333% 0%; }
+.route-backdrop[data-page="mentor"] { background-position: center, 66.667% 0%; }
+.route-backdrop[data-page="interview"] { background-position: center, 100% 0%; }
+.route-backdrop[data-page="plan"] { background-position: center, 0% 100%; }
+.route-backdrop[data-page="sheets"] { background-position: center, 33.333% 100%; }
+.route-backdrop[data-page="contests"] { background-position: center, 66.667% 100%; }
+.route-backdrop[data-page="resume"] { background-position: center, 100% 100%; }
+
+/* Glassmorphism and modern gradient surfaces */
+.glass-panel {
+  background: rgba(7, 15, 31, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.glass-panel-glow {
+  background: linear-gradient(135deg, rgba(20, 30, 55, 0.62) 0%, rgba(13, 21, 38, 0.72) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.gradient-border-teal {
+  position: relative;
+}
+.gradient-border-teal::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.5), rgba(56, 189, 248, 0.1), transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.gradient-border-purple {
+  position: relative;
+}
+.gradient-border-purple::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.5), rgba(129, 140, 248, 0.2), transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.gradient-text-hero {
+  background: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-warm {
+  background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-cool {
+  background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtle glow effects */
+.glow-teal {
+  box-shadow: 0 0 25px -5px rgba(45, 212, 191, 0.25);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 25px -5px rgba(129, 140, 248, 0.25);
+}
+
+.glow-amber {
+  box-shadow: 0 0 25px -5px rgba(251, 191, 36, 0.25);
+}
+
+.glow-rose {
+  box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.25);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(13, 21, 38, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 212, 191, 0.4);
 }
 
 ::selection {

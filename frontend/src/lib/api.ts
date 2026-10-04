@@ -49,17 +49,44 @@ export async function api<T = unknown>(path: string, options: RequestInit = {}):
 /** POST that returns a file download instead of JSON. */
 export async function apiDownload(path: string, body: unknown, filename: string) {
   const token = getToken();
-  const res = await fetch(`${API_URL}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error("Download failed");
+  const isMultipart = body instanceof FormData;
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method: "POST",
+      headers: { ...(!isMultipart ? { "Content-Type": "application/json" } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      body: isMultipart ? body : JSON.stringify(body),
+    });
+  } catch (cause) {
+    if (cause instanceof TypeError) {
+      throw new Error(`Cannot reach the backend at ${API_URL}. Start the backend from the backend folder with: uv run uvicorn app.main:app --port 8000 --reload`);
+    }
+    throw cause;
+  }
+  if (res.status === 401) {
+    clearToken();
+    if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+      window.location.href = "/login";
+    }
+    throw new Error("Not authenticated");
+  }
+  if (!res.ok) {
+    let detail = `Download failed (${res.status})`;
+    try {
+      const response = await res.json();
+      detail = response.detail || detail;
+    } catch { /* keep default */ }
+    throw new Error(detail);
+  }
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  // Keep the object URL alive until the browser has started the download.
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

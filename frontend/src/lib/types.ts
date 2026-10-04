@@ -18,6 +18,8 @@ export interface PlatformAccount {
     easy?: number;
     medium?: number;
     hard?: number;
+    difficulty_method?: string;
+    difficulty_breakdown_available?: boolean;
     rating?: number | null;
     max_rating?: number | null;
     topics?: { name: string; slug: string; solved: number }[];
@@ -65,6 +67,26 @@ export interface Plan {
   tasks: PlanTask[];
 }
 
+export interface TimeSlot {
+  time_range: string;
+  title: string;
+  activity_type: "theory" | "coding" | "contest" | "review" | "break" | "college_work";
+  duration_minutes: number;
+  description: string;
+  target_problems: string[];
+  checklist: string[];
+  tips: string;
+}
+
+export interface DailyRoutine {
+  title: string;
+  focus_theme: string;
+  total_study_hours: number;
+  summary: string;
+  slots: TimeSlot[];
+  pro_tip: string;
+}
+
 export interface SheetQuestion {
   id: number;
   order: number;
@@ -87,9 +109,11 @@ export interface Sheet {
 }
 
 export interface Contest {
+  id?: string;
   platform: string;
   name: string;
   start_time: string;
   duration_minutes: number;
   url: string;
+  gcal_url?: string;
 }

@@ -16,6 +16,7 @@ dependencies = [
     "apscheduler>=3.10.4",
     "fpdf2>=2.7.9",
     "python-multipart>=0.0.9",
+    "pypdf>=5.0.0",
     "langchain>=1.0.0",
     "langchain-core>=1.0.0",
     "langchain-google-genai>=4.0.0",

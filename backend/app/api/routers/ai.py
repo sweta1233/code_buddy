@@ -1,4 +1,5 @@
 import json
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
@@ -7,12 +8,13 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.ai.mentor import build_mentor_graph
+from app.ai.mentor import build_mentor_graph, offline_mentor_reply
 from app.api.deps import get_current_user
 from app.db.base import get_db, SessionLocal
 from app.models import ChatMessage, ChatSession, User
 
 router = APIRouter(prefix="/api/ai", tags=["ai"])
+logger = logging.getLogger(__name__)
 
 
 class ChatIn(BaseModel):
@@ -76,20 +78,35 @@ def chat(body: ChatIn, user: User = Depends(get_current_user), db: Session = Dep
     def event_stream():
         db_stream = SessionLocal()
         try:
-            graph = build_mentor_graph(db_stream, user_id, user_name)
-            inputs = {"messages": history + [HumanMessage(content=message)]}
             partial = ""
-            for chunk, meta in graph.stream(inputs, stream_mode="messages", config={"recursion_limit": 25}):
-                if meta.get("langgraph_node") != "agent":
-                    continue
-                content = chunk.content
-                if isinstance(content, list):
-                    content = "".join(
-                        p.get("text", "") for p in content if isinstance(p, dict) and p.get("type") == "text"
+            try:
+                graph = build_mentor_graph(db_stream, user_id, user_name)
+                inputs = {"messages": history + [HumanMessage(content=message)]}
+                for chunk, meta in graph.stream(inputs, stream_mode="messages", config={"recursion_limit": 25}):
+                    if meta.get("langgraph_node") != "agent":
+                        continue
+                    content = chunk.content
+                    if isinstance(content, list):
+                        content = "".join(
+                            p.get("text", "") for p in content if isinstance(p, dict) and p.get("type") == "text"
+                        )
+                    if content:
+                        partial += content
+                        yield f"data: {json.dumps({'token': content})}\n\n"
+            except Exception as exc:
+                logger.warning("Mentor model unavailable; replying from local profile data: %s", exc)
+                try:
+                    fallback = offline_mentor_reply(db_stream, user_id, user_name, message)
+                except Exception:
+                    logger.exception("Local mentor fallback failed")
+                    fallback = (
+                        "The AI service is unavailable right now. I could not load your profile summary; "
+                        "try syncing your platforms and asking again."
                     )
-                if content:
-                    partial += content
-                    yield f"data: {json.dumps({'token': content})}\n\n"
+                if partial:
+                    fallback = "\n\n" + fallback
+                partial += fallback
+                yield f"data: {json.dumps({'token': fallback})}\n\n"
             db_stream.add(ChatMessage(session_id=session_id, user_id=user_id, role="assistant", content=partial))
             db_stream.commit()
             yield f"data: {json.dumps({'done': True, 'session_id': session_id, 'title': (message[:60] if first_message else None)})}\n\n"
